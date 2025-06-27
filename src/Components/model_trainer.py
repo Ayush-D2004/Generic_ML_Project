@@ -87,30 +87,39 @@ class ModelTrainer:
                 "Decision Tree Regressor": {
                     "max_depth": [None, 5, 10, 20],
                     "min_samples_split": [2, 5, 10],
+                    "min_samples_leaf": [1, 2, 4],
+                    "criterion": ["squared_error", "friedman_mse"],
                 },
                 "Random Forest Regressor": {
-                    "n_estimators": [50, 100],
+                    "n_estimators": [50, 100, 200],
                     "max_depth": [None, 5, 10],
                     "min_samples_split": [2, 5],
+                    "min_samples_leaf": [1, 2],
+                    "bootstrap": [True, False],
                 },
                 "AdaBoost Regressor": {
                     "n_estimators": [50, 100],
                     "learning_rate": [0.01, 0.1, 1.0],
+                    "loss": ["linear", "square", "exponential"],
                 },
                 "Gradient Boosting Regressor": {
                     "n_estimators": [50, 100],
                     "learning_rate": [0.01, 0.1, 0.2],
                     "max_depth": [3, 5, 7],
+                    "subsample": [0.8, 1.0],
                 },
                 "CatBoost Regressor": {
                     "iterations": [100, 200],
                     "learning_rate": [0.01, 0.1],
                     "depth": [3, 5, 7],
+                    "l2_leaf_reg": [1, 3, 5],
                 },
                 "XGBoost Regressor": {
                     "n_estimators": [50, 100],
                     "learning_rate": [0.01, 0.1],
                     "max_depth": [3, 5, 7],
+                    "subsample": [0.8, 1.0],
+                    "colsample_bytree": [0.8, 1.0],
                 },
             }
 
@@ -124,17 +133,17 @@ class ModelTrainer:
             )
             grid_search.fit(X_train, y_train)
             best_params = grid_search.best_params_
-            
+
             best_tuned_model = grid_search.best_estimator_
-            
+
             predicted = best_tuned_model.predict(X_test)
             r2_square = best_tuned_model.score(X_test, y_test)
-            
+
             save_object(
                 file_path=self.model_trainer_config.trained_model_file_path,
                 obj=best_tuned_model,
             )
-            
+
             logging.info(
                 f"Best model is {best_model_name} with parameters: {best_params} got r2_score: {r2_square}"
             )
